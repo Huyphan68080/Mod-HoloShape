@@ -10,6 +10,14 @@
 
 ---
 
+## ⚙️ Yêu cầu cài đặt (Requirements)
+
+Để mod chạy được, bạn cần chuẩn bị các phần mềm sau:
+* **Fabric Loader**: Phiên bản `>=0.16.0`.
+* **Fabric API**: Cài đặt **Fabric API** phiên bản tương thích với Minecraft 1.21.11 trong thư mục `mods` để mod hoạt động bình thường.
+
+---
+
 ## 🌟 Tính năng nổi bật
 * **Hologram Preview thời gian thực**: Xem trước hình dạng của khối trong không gian khi di chuyển chuột.
 * **13 loại hình học phong phú**: Hỗ trợ đầy đủ các khối cơ bản, hình đa giác và cả những hình dạng nghệ thuật phức tạp.
