@@ -54,7 +54,7 @@ public class ShapeMath {
         // Vẽ các cạnh song song với trục Z (tránh trùng góc đã vẽ)
         for (int z = minZ + 1; z < maxZ; z++) {
             offsets.add(new BlockPos(minX, 0, z));
-            if (minX != dx) {
+            if (minX != maxX) {
                 offsets.add(new BlockPos(maxX, 0, z));
             }
         }
@@ -125,8 +125,7 @@ public class ShapeMath {
      * Tính toán các block tương đối tạo thành hình hộp chữ nhật rỗng 3D.
      */
     public static List<BlockPos> getCuboidOffsets(BlockPos p1, BlockPos p2) {
-        List<BlockPos> offsets = new ArrayList<>();
-        if (p1 == null || p2 == null) return offsets;
+        if (p1 == null || p2 == null) return new ArrayList<>();
 
         int dx = p2.getX() - p1.getX();
         int dy = p2.getY() - p1.getY();
@@ -139,16 +138,33 @@ public class ShapeMath {
         int minZ = Math.min(0, dz);
         int maxZ = Math.max(0, dz);
 
-        for (int x = minX; x <= maxX; x++) {
-            for (int y = minY; y <= maxY; y++) {
-                for (int z = minZ; z <= maxZ; z++) {
-                    if (x == minX || x == maxX || y == minY || y == maxY || z == minZ || z == maxZ) {
-                        offsets.add(new BlockPos(x, y, z));
-                    }
-                }
+        java.util.Set<BlockPos> set = new java.util.LinkedHashSet<>();
+
+        // Mặt X
+        for (int y = minY; y <= maxY; y++) {
+            for (int z = minZ; z <= maxZ; z++) {
+                set.add(new BlockPos(minX, y, z));
+                set.add(new BlockPos(maxX, y, z));
             }
         }
-        return offsets;
+
+        // Mặt Y
+        for (int x = minX; x <= maxX; x++) {
+            for (int z = minZ; z <= maxZ; z++) {
+                set.add(new BlockPos(x, minY, z));
+                set.add(new BlockPos(x, maxY, z));
+            }
+        }
+
+        // Mặt Z
+        for (int x = minX; x <= maxX; x++) {
+            for (int y = minY; y <= maxY; y++) {
+                set.add(new BlockPos(x, y, minZ));
+                set.add(new BlockPos(x, y, maxZ));
+            }
+        }
+
+        return new ArrayList<>(set);
     }
 
     /**
@@ -281,11 +297,11 @@ public class ShapeMath {
      * Tính toán các block tương đối tạo thành hình lăng trụ ngôi sao 3D.
      */
     public static List<BlockPos> getStarOffsets(double radius, int height) {
-        List<BlockPos> offsets = new ArrayList<>();
-        if (radius < 0.1) return offsets;
+        if (radius < 0.1) return new ArrayList<>();
 
         int minY = Math.min(0, height);
         int maxY = Math.max(0, height);
+        java.util.Set<BlockPos> offsets = new java.util.LinkedHashSet<>();
 
         for (int y = minY; y <= maxY; y++) {
             List<BlockPos> vertices = new ArrayList<>();
@@ -302,31 +318,29 @@ public class ShapeMath {
                 BlockPos p2 = vertices.get((i + 1) % 10);
                 List<BlockPos> line = getLineOffsets(p1, p2);
                 for (BlockPos bp : line) {
-                    BlockPos absoluteRelative = p1.add(bp);
-                    if (!offsets.contains(absoluteRelative)) {
-                        offsets.add(absoluteRelative);
-                    }
+                    offsets.add(p1.add(bp));
                 }
             }
         }
-        return offsets;
+        return new ArrayList<>(offsets);
     }
 
     /**
      * Tính toán các block tương đối tạo thành hình lăng trụ trái tim 3D.
      */
     public static List<BlockPos> getHeartOffsets(double radius, int height) {
-        List<BlockPos> offsets = new ArrayList<>();
-        if (radius < 0.1) return offsets;
+        if (radius < 0.1) return new ArrayList<>();
 
         int minY = Math.min(0, height);
         int maxY = Math.max(0, height);
-        int numPoints = 48;
+        java.util.Set<BlockPos> offsets = new java.util.LinkedHashSet<>();
+
+        // Dynamic step count based on radius to prevent overlaps and gaps
+        int numSteps = Math.max(100, (int) (2.0 * Math.PI * radius * 3.0));
 
         for (int y = minY; y <= maxY; y++) {
-            List<BlockPos> vertices = new ArrayList<>();
-            for (int i = 0; i < numPoints; i++) {
-                double t = (2.0 * Math.PI * i) / numPoints;
+            for (int i = 0; i < numSteps; i++) {
+                double t = (2.0 * Math.PI * i) / numSteps;
                 double sinT = Math.sin(t);
                 double hx = 16.0 * sinT * sinT * sinT;
                 double hz = 13.0 * Math.cos(t) - 5.0 * Math.cos(2.0 * t) - 2.0 * Math.cos(3.0 * t) - Math.cos(4.0 * t);
@@ -336,22 +350,10 @@ public class ShapeMath {
 
                 int vx = (int) Math.round(sx);
                 int vz = (int) Math.round(-sz);
-                vertices.add(new BlockPos(vx, y, vz));
-            }
-
-            for (int i = 0; i < numPoints; i++) {
-                BlockPos p1 = vertices.get(i);
-                BlockPos p2 = vertices.get((i + 1) % numPoints);
-                List<BlockPos> line = getLineOffsets(p1, p2);
-                for (BlockPos bp : line) {
-                    BlockPos absoluteRelative = p1.add(bp);
-                    if (!offsets.contains(absoluteRelative)) {
-                        offsets.add(absoluteRelative);
-                    }
-                }
+                offsets.add(new BlockPos(vx, y, vz));
             }
         }
-        return offsets;
+        return new ArrayList<>(offsets);
     }
 
     /**
@@ -386,11 +388,11 @@ public class ShapeMath {
      * Tính toán các block tương đối tạo thành hình lăng trụ đa giác đều (Hexagon, Octagon, ...).
      */
     public static List<BlockPos> getPolygonOffsets(double radius, int height, int edges) {
-        List<BlockPos> offsets = new ArrayList<>();
-        if (radius < 0.1 || edges < 3) return offsets;
+        if (radius < 0.1 || edges < 3) return new ArrayList<>();
 
         int minY = Math.min(0, height);
         int maxY = Math.max(0, height);
+        java.util.Set<BlockPos> offsets = new java.util.LinkedHashSet<>();
 
         for (int y = minY; y <= maxY; y++) {
             List<BlockPos> vertices = new ArrayList<>();
@@ -406,13 +408,10 @@ public class ShapeMath {
                 BlockPos p2 = vertices.get((i + 1) % edges);
                 List<BlockPos> line = getLineOffsets(p1, p2);
                 for (BlockPos bp : line) {
-                    BlockPos absoluteRelative = p1.add(bp);
-                    if (!offsets.contains(absoluteRelative)) {
-                        offsets.add(absoluteRelative);
-                    }
+                    offsets.add(p1.add(bp));
                 }
             }
         }
-        return offsets;
+        return new ArrayList<>(offsets);
     }
 }

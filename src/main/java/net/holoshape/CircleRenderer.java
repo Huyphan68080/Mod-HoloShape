@@ -15,6 +15,63 @@ import java.util.List;
 public class CircleRenderer {
 
     /**
+     * Render các outline block ảo và kiểm tra tính hợp lệ của block thực tế trong world.
+     */
+    public static void renderValidated(WorldRenderContext context, BlockPos center, List<BlockPos> offsets, net.minecraft.block.Block targetBlock, float alpha) {
+        if (center == null || offsets == null || offsets.isEmpty()) return;
+
+        net.minecraft.client.world.ClientWorld world = net.minecraft.client.MinecraftClient.getInstance().world;
+        if (world == null) return;
+
+        MatrixStack matrices = context.matrices();
+        Vec3d cameraPos = context.worldState().cameraRenderState.pos;
+        VertexConsumerProvider consumers = context.consumers();
+        if (consumers == null) return;
+
+        VertexConsumer vertexConsumer = consumers.getBuffer(RenderLayers.lines());
+
+        matrices.push();
+        
+        double xOffset = center.getX() - cameraPos.x;
+        double yOffset = center.getY() - cameraPos.y;
+        double zOffset = center.getZ() - cameraPos.z;
+        
+        matrices.translate(xOffset, yOffset, zOffset);
+
+        for (BlockPos offset : offsets) {
+            BlockPos worldPos = center.add(offset);
+            net.minecraft.block.BlockState blockState = world.getBlockState(worldPos);
+
+            float r, g, b;
+            if (blockState.isAir()) {
+                // Thiếu: Vàng
+                r = 1.0f;
+                g = 1.0f;
+                b = 0.0f;
+            } else if (targetBlock != null && blockState.isOf(targetBlock)) {
+                // Đúng: Trắng
+                r = 1.0f;
+                g = 1.0f;
+                b = 1.0f;
+            } else {
+                // Sai: Đỏ
+                r = 1.0f;
+                g = 0.0f;
+                b = 0.0f;
+            }
+
+            matrices.push();
+            matrices.translate(offset.getX(), offset.getY(), offset.getZ());
+            
+            drawBoxOutline(matrices, vertexConsumer, r, g, b, alpha);
+            
+            matrices.pop();
+        }
+
+        matrices.pop();
+    }
+
+    /**
      * Render các outline block tương đối dựa trên danh sách offset và tọa độ tâm thực tế.
      */
     public static void render(WorldRenderContext context, BlockPos center, List<BlockPos> offsets, float r, float g, float b, float a) {

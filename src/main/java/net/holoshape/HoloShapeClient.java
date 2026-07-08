@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.util.Identifier;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -38,6 +39,8 @@ public class HoloShapeClient implements ClientModInitializer {
     private static double lastRadiusCalculated = -1.0;
     private static int lastHeightCalculated = -99999;
     private static ShapeType currentShape = ShapeType.CIRCLE;
+    private static BlockPos lastTargetPos = null;
+    private static net.minecraft.block.Block targetBlock = null;
 
     public static KeyBinding openGuiKey;
 
@@ -61,7 +64,7 @@ public class HoloShapeClient implements ClientModInitializer {
                 "key.holoshape.open_gui",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_H,
-                KeyBinding.Category.MISC
+                KeyBinding.Category.create(Identifier.of("holoshape", "main"))
         ));
 
         // Lắng nghe sự kiện tick để mở GUI khi bấm phím
@@ -127,19 +130,21 @@ public class HoloShapeClient implements ClientModInitializer {
                     BlockPos targetPos = ((BlockHitResult) hit).getBlockPos();
                     calculateOffsets(targetPos);
                 }
-                // Render đường viền ảo màu trắng mờ (Alpha = 0.4)
-                CircleRenderer.render(context, centerPos, shapeOffsets, 1.0f, 1.0f, 1.0f, 0.4f);
+                // Render đường viền ảo có kiểm tra (Alpha = 0.4)
+                CircleRenderer.renderValidated(context, centerPos, shapeOffsets, targetBlock, 0.4f);
             } 
             // 3. Vẽ hình dạng cố định màu Cyan khi đã chốt bán kính (State 2)
             else if (state == 2 && centerPos != null) {
-                // Render đường viền ảo màu Cyan (Alpha = 0.6)
-                CircleRenderer.render(context, centerPos, shapeOffsets, 0.0f, 1.0f, 1.0f, 0.6f);
+                // Render đường viền ảo có kiểm tra (Alpha = 0.6)
+                CircleRenderer.renderValidated(context, centerPos, shapeOffsets, targetBlock, 0.6f);
             }
         });
     }
 
     private static void calculateOffsets(BlockPos targetPos) {
         if (centerPos == null || targetPos == null) return;
+        if (targetPos.equals(lastTargetPos)) return;
+        lastTargetPos = targetPos;
 
         switch (currentShape) {
             case CIRCLE: {
@@ -287,11 +292,13 @@ public class HoloShapeClient implements ClientModInitializer {
         if (state == 0) {
             state = 1;
             centerPos = clickedPos;
+            targetBlock = MinecraftClient.getInstance().world.getBlockState(clickedPos).getBlock();
             secondPos = null;
             radius = 0.0;
             shapeOffsets.clear();
             lastRadiusCalculated = -1.0;
-            player.sendMessage(Text.literal("§c[HoloShape] Đã đặt Điểm 1 tại: " + clickedPos.toShortString()), false);
+            lastTargetPos = null;
+            player.sendMessage(Text.literal("§c[HoloShape] Đã đặt Điểm 1 tại: " + clickedPos.toShortString() + " (Khối mẫu: " + targetBlock.getName().getString() + ")"), false);
         } else if (state == 1) {
             state = 2;
             secondPos = clickedPos;
@@ -308,6 +315,8 @@ public class HoloShapeClient implements ClientModInitializer {
         shapeOffsets.clear();
         lastRadiusCalculated = -1.0;
         lastHeightCalculated = -99999;
+        lastTargetPos = null;
+        targetBlock = null;
         player.sendMessage(Text.literal("§e[HoloShape] Đã reset trạng thái!"), false);
     }
 }
