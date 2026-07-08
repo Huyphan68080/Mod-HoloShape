@@ -40,7 +40,6 @@ public class HoloShapeClient implements ClientModInitializer {
     private static int lastHeightCalculated = -99999;
     private static ShapeType currentShape = ShapeType.CIRCLE;
     private static BlockPos lastTargetPos = null;
-    private static net.minecraft.block.Block targetBlock = null;
 
     public static KeyBinding openGuiKey;
 
@@ -130,13 +129,13 @@ public class HoloShapeClient implements ClientModInitializer {
                     BlockPos targetPos = ((BlockHitResult) hit).getBlockPos();
                     calculateOffsets(targetPos);
                 }
-                // Render đường viền ảo có kiểm tra (Alpha = 0.4)
-                CircleRenderer.renderValidated(context, centerPos, shapeOffsets, targetBlock, 0.4f);
+                // Render đường viền ảo màu trắng mờ (Alpha = 0.4)
+                CircleRenderer.render(context, centerPos, shapeOffsets, 1.0f, 1.0f, 1.0f, 0.4f);
             } 
             // 3. Vẽ hình dạng cố định màu Cyan khi đã chốt bán kính (State 2)
             else if (state == 2 && centerPos != null) {
-                // Render đường viền ảo có kiểm tra (Alpha = 0.6)
-                CircleRenderer.renderValidated(context, centerPos, shapeOffsets, targetBlock, 0.6f);
+                // Render đường viền ảo màu Cyan (Alpha = 0.6)
+                CircleRenderer.render(context, centerPos, shapeOffsets, 0.0f, 1.0f, 1.0f, 0.6f);
             }
         });
     }
@@ -292,13 +291,12 @@ public class HoloShapeClient implements ClientModInitializer {
         if (state == 0) {
             state = 1;
             centerPos = clickedPos;
-            targetBlock = MinecraftClient.getInstance().world.getBlockState(clickedPos).getBlock();
             secondPos = null;
             radius = 0.0;
             shapeOffsets.clear();
             lastRadiusCalculated = -1.0;
             lastTargetPos = null;
-            player.sendMessage(Text.literal("§c[HoloShape] Đã đặt Điểm 1 tại: " + clickedPos.toShortString() + " (Khối mẫu: " + targetBlock.getName().getString() + ")"), false);
+            player.sendMessage(Text.literal("§c[HoloShape] Đã đặt Điểm 1 tại: " + clickedPos.toShortString()), false);
         } else if (state == 1) {
             state = 2;
             secondPos = clickedPos;
@@ -316,7 +314,6 @@ public class HoloShapeClient implements ClientModInitializer {
         lastRadiusCalculated = -1.0;
         lastHeightCalculated = -99999;
         lastTargetPos = null;
-        targetBlock = null;
         player.sendMessage(Text.literal("§e[HoloShape] Đã reset trạng thái!"), false);
     }
 }
