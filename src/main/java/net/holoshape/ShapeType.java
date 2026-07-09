@@ -15,7 +15,10 @@ public enum ShapeType {
     HEART("heart"),
     TORUS("torus"),
     HEXAGON("hexagon"),
-    OCTAGON("octagon");
+    OCTAGON("octagon"),
+    ARCH("arch"),
+    HORSESHOE("horseshoe"),
+    MATH("math");
 
     private final String translationKey;
 

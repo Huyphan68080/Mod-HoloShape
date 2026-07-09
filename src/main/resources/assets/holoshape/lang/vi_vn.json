@@ -16,6 +16,9 @@
   "gui.holoshape.shape.torus": "Hình Phao",
   "gui.holoshape.shape.hexagon": "Hình Lục Giác",
   "gui.holoshape.shape.octagon": "Hình Bát Giác",
+  "gui.holoshape.shape.arch": "Cổng Vòm",
+  "gui.holoshape.shape.horseshoe": "Móng Ngựa",
+  "gui.holoshape.shape.math": "Công Thức Toán",
   "chat.holoshape.set_point1": "§c[HoloShape] Đã đặt Điểm 1 tại: %s",
   "chat.holoshape.finalized": "§3[HoloShape] Đã chốt hình dạng!",
   "chat.holoshape.reset": "§e[HoloShape] Đã reset trạng thái!"

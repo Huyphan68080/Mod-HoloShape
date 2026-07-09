@@ -414,4 +414,210 @@ public class ShapeMath {
         }
         return new ArrayList<>(offsets);
     }
+
+    /**
+     * Tính toán các block tương đối tạo thành hình Cổng Vòm (Arch).
+     */
+    public static List<BlockPos> getArchOffsets(double radius, int legHeight) {
+        List<BlockPos> offsets = new ArrayList<>();
+        if (radius < 0.1) return offsets;
+
+        int rLimit = (int) Math.ceil(radius + 0.5);
+        double innerRadiusSq = Math.pow(radius - 0.5, 2);
+        double outerRadiusSq = Math.pow(radius + 0.5, 2);
+
+        // Vòm bán nguyệt ở trên (dy >= 0, dịch chuyển lên trên legHeight)
+        for (int dx = -rLimit; dx <= rLimit; dx++) {
+            for (int dy = 0; dy <= rLimit; dy++) {
+                double distSq = dx * dx + dy * dy;
+                if (distSq >= innerRadiusSq && distSq < outerRadiusSq) {
+                    offsets.add(new BlockPos(dx, dy + legHeight, 0));
+                }
+            }
+        }
+
+        // Chân vòm thẳng đứng từ y = 0 đến legHeight
+        int rInt = (int) Math.round(radius);
+        for (int dy = 0; dy < legHeight; dy++) {
+            offsets.add(new BlockPos(-rInt, dy, 0));
+            offsets.add(new BlockPos(rInt, dy, 0));
+        }
+
+        return offsets;
+    }
+
+    /**
+     * Tính toán các block tương đối tạo thành hình Móng Ngựa (Horseshoe).
+     */
+    public static List<BlockPos> getHorseshoeOffsets(double radius, int legHeight) {
+        List<BlockPos> offsets = new ArrayList<>();
+        if (radius < 0.1) return offsets;
+
+        double theta = Math.toRadians(30.0); // Độ phình góc 30 độ ở dưới
+        int numSteps = Math.max(100, (int) (2.0 * Math.PI * radius * 3.0));
+        java.util.Set<BlockPos> set = new java.util.LinkedHashSet<>();
+
+        // Phần vòm tròn lượng giác từ -theta đến PI + theta
+        for (int i = 0; i <= numSteps; i++) {
+            double angle = -theta + (Math.PI + 2.0 * theta) * i / numSteps;
+            double u = radius * Math.cos(angle);
+            double v = legHeight + radius * Math.sin(angle);
+            set.add(new BlockPos((int) Math.round(u), (int) Math.round(v), 0));
+        }
+
+        // Hai chân thẳng đứng từ v = legHeight - radius * sin(theta) đi xuống v = 0
+        double legX = radius * Math.cos(-theta);
+        double startY = legHeight - radius * Math.sin(theta);
+        int lx1 = (int) Math.round(-legX);
+        int lx2 = (int) Math.round(legX);
+
+        for (int y = 0; y <= startY; y++) {
+            set.add(new BlockPos(lx1, y, 0));
+            set.add(new BlockPos(lx2, y, 0));
+        }
+
+        return new ArrayList<>(set);
+    }
+
+    /**
+     * Tính toán các block tương đối dựa trên 3 công thức toán học tham số t.
+     */
+    public static List<BlockPos> getMathOffsets(String exprX, String exprY, String exprZ, double tMin, double tMax, double tStep) {
+        List<BlockPos> offsets = new ArrayList<>();
+        if (tStep <= 0.001) tStep = 0.1;
+        
+        java.util.Set<BlockPos> set = new java.util.LinkedHashSet<>();
+        
+        for (double t = tMin; t <= tMax + 0.0001; t += tStep) {
+            try {
+                double valX = MathParser.eval(exprX, t, t);
+                double valY = MathParser.eval(exprY, t, t);
+                double valZ = MathParser.eval(exprZ, t, t);
+                
+                int x = (int) Math.round(valX);
+                int y = (int) Math.round(valY);
+                int z = (int) Math.round(valZ);
+                
+                set.add(new BlockPos(x, y, z));
+            } catch (Exception e) {
+                // Bỏ qua điểm nếu công thức không hợp lệ hoặc chia cho 0
+            }
+        }
+        return new ArrayList<>(set);
+    }
+
+    /**
+     * Extrude a 2D shape offset list along a direction vector.
+     */
+    public static List<BlockPos> extrudeOffsets(List<BlockPos> baseOffsets, int length, BlockPos dirVec) {
+        if (length <= 1 || baseOffsets == null || baseOffsets.isEmpty() || dirVec.equals(BlockPos.ORIGIN)) {
+            return baseOffsets;
+        }
+        java.util.Set<BlockPos> extruded = new java.util.LinkedHashSet<>();
+        for (BlockPos offset : baseOffsets) {
+            for (int i = 0; i < length; i++) {
+                extruded.add(new BlockPos(
+                    offset.getX() + dirVec.getX() * i,
+                    offset.getY() + dirVec.getY() * i,
+                    offset.getZ() + dirVec.getZ() * i
+                ));
+            }
+        }
+        return new ArrayList<>(extruded);
+    }
+
+    /**
+     * Bộ phân tích cú pháp toán học tự chứa hỗ trợ các hàm: sin, cos, tan, sqrt, abs, pow.
+     */
+    public static class MathParser {
+        public static double eval(final String str, final double t, final double x) {
+            if (str == null || str.trim().isEmpty()) return 0.0;
+            return new Object() {
+                int pos = -1, ch;
+
+                void nextChar() {
+                    ch = (++pos < str.length()) ? str.charAt(pos) : -1;
+                }
+
+                boolean eat(int charToEat) {
+                    while (ch == ' ') nextChar();
+                    if (ch == charToEat) {
+                        nextChar();
+                        return true;
+                    }
+                    return false;
+                }
+
+                double parse() {
+                    nextChar();
+                    double xVal = parseExpression();
+                    if (pos < str.length()) throw new RuntimeException("Unexpected: " + (char)ch);
+                    return xVal;
+                }
+
+                double parseExpression() {
+                    double xVal = parseTerm();
+                    for (;;) {
+                        if      (eat('+')) xVal += parseTerm();
+                        else if (eat('-')) xVal -= parseTerm();
+                        else return xVal;
+                    }
+                }
+
+                double parseTerm() {
+                    double xVal = parseFactor();
+                    for (;;) {
+                        if      (eat('*')) xVal *= parseFactor();
+                        else if (eat('/')) {
+                            double denom = parseFactor();
+                            if (Math.abs(denom) < 1e-9) throw new RuntimeException("Division by zero");
+                            xVal /= denom;
+                        }
+                        else return xVal;
+                    }
+                }
+
+                double parseFactor() {
+                    if (eat('+')) return parseFactor();
+                    if (eat('-')) return -parseFactor();
+
+                    double xVal;
+                    int startPos = this.pos;
+                    if (eat('(')) {
+                        xVal = parseExpression();
+                        eat(')');
+                    } else if ((ch >= '0' && ch <= '9') || ch == '.') {
+                        while ((ch >= '0' && ch <= '9') || ch == '.') nextChar();
+                        xVal = Double.parseDouble(str.substring(startPos, this.pos));
+                    } else if (ch >= 'a' && ch <= 'z') {
+                        while (ch >= 'a' && ch <= 'z') nextChar();
+                        String name = str.substring(startPos, this.pos);
+                        if (name.equals("t")) {
+                            xVal = t;
+                        } else if (name.equals("x")) {
+                            xVal = x;
+                        } else if (name.equals("pi")) {
+                            xVal = Math.PI;
+                        } else if (name.equals("e")) {
+                            xVal = Math.E;
+                        } else {
+                            xVal = parseFactor();
+                            if (name.equals("sin")) xVal = Math.sin(xVal);
+                            else if (name.equals("cos")) xVal = Math.cos(xVal);
+                            else if (name.equals("tan")) xVal = Math.tan(xVal);
+                            else if (name.equals("sqrt")) xVal = Math.sqrt(xVal);
+                            else if (name.equals("abs")) xVal = Math.abs(xVal);
+                            else throw new RuntimeException("Unknown function: " + name);
+                        }
+                    } else {
+                        throw new RuntimeException("Unexpected: " + (char)ch);
+                    }
+
+                    if (eat('^')) xVal = Math.pow(xVal, parseFactor());
+
+                    return xVal;
+                }
+            }.parse();
+        }
+    }
 }

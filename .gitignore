@@ -25,3 +25,7 @@ bin/
 # JDK
 jdk21/
 
+# Logs
+logs/
+
+

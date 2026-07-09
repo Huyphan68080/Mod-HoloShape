@@ -16,6 +16,9 @@
   "gui.holoshape.shape.torus": "圆环 (甜甜圈)",
   "gui.holoshape.shape.hexagon": "六角柱",
   "gui.holoshape.shape.octagon": "八角柱",
+  "gui.holoshape.shape.arch": "拱形",
+  "gui.holoshape.shape.horseshoe": "马蹄形",
+  "gui.holoshape.shape.math": "数学公式",
   "chat.holoshape.set_point1": "§c[HoloShape] 已设置点 1： %s",
   "chat.holoshape.finalized": "§3[HoloShape] 形状已锁定！",
   "chat.holoshape.reset": "§e[HoloShape] 状态已重置！"

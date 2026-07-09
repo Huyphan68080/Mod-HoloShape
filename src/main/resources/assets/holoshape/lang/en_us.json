@@ -16,6 +16,9 @@
   "gui.holoshape.shape.torus": "Torus",
   "gui.holoshape.shape.hexagon": "Hexagon",
   "gui.holoshape.shape.octagon": "Octagon",
+  "gui.holoshape.shape.arch": "Arch",
+  "gui.holoshape.shape.horseshoe": "Horseshoe",
+  "gui.holoshape.shape.math": "Math Eq",
   "chat.holoshape.set_point1": "§c[HoloShape] Set Point 1 at: %s",
   "chat.holoshape.finalized": "§3[HoloShape] Shape finalized!",
   "chat.holoshape.reset": "§e[HoloShape] State reset!"
