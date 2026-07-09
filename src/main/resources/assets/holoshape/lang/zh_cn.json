@@ -1,0 +1,22 @@
+{
+  "key.holoshape.open_gui": "打开 HoloShape 菜单",
+  "key.category.holoshape.main": "HoloShape 模组",
+  "category.holoshape": "HoloShape 模组",
+  "gui.holoshape.title": "HoloShape 选择 - Cre:HuyPhan(Sun)",
+  "gui.holoshape.shape.circle": "圆圈",
+  "gui.holoshape.shape.rectangle": "长方形",
+  "gui.holoshape.shape.sphere": "球体",
+  "gui.holoshape.shape.line": "直线",
+  "gui.holoshape.shape.cuboid": "立方体",
+  "gui.holoshape.shape.cylinder": "圆柱体",
+  "gui.holoshape.shape.cone": "圆锥体",
+  "gui.holoshape.shape.pyramid": "金字塔",
+  "gui.holoshape.shape.star": "星星",
+  "gui.holoshape.shape.heart": "爱心",
+  "gui.holoshape.shape.torus": "圆环 (甜甜圈)",
+  "gui.holoshape.shape.hexagon": "六角柱",
+  "gui.holoshape.shape.octagon": "八角柱",
+  "chat.holoshape.set_point1": "§c[HoloShape] 已设置点 1： %s",
+  "chat.holoshape.finalized": "§3[HoloShape] 形状已锁定！",
+  "chat.holoshape.reset": "§e[HoloShape] 状态已重置！"
+}

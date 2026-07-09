@@ -1,0 +1,22 @@
+{
+  "key.holoshape.open_gui": "Mở Menu HoloShape",
+  "key.category.holoshape.main": "HoloShape Mod",
+  "category.holoshape": "HoloShape Mod",
+  "gui.holoshape.title": "HoloShape Selection - Cre:HuyPhan(Sun)",
+  "gui.holoshape.shape.circle": "Vòng Tròn",
+  "gui.holoshape.shape.rectangle": "Hình Chữ Nhật",
+  "gui.holoshape.shape.sphere": "Hình Cầu",
+  "gui.holoshape.shape.line": "Đường Thẳng",
+  "gui.holoshape.shape.cuboid": "Hình Hộp",
+  "gui.holoshape.shape.cylinder": "Hình Trụ",
+  "gui.holoshape.shape.cone": "Hình Nón",
+  "gui.holoshape.shape.pyramid": "Hình Chóp",
+  "gui.holoshape.shape.star": "Ngôi Sao",
+  "gui.holoshape.shape.heart": "Trái Tim",
+  "gui.holoshape.shape.torus": "Hình Phao",
+  "gui.holoshape.shape.hexagon": "Hình Lục Giác",
+  "gui.holoshape.shape.octagon": "Hình Bát Giác",
+  "chat.holoshape.set_point1": "§c[HoloShape] Đã đặt Điểm 1 tại: %s",
+  "chat.holoshape.finalized": "§3[HoloShape] Đã chốt hình dạng!",
+  "chat.holoshape.reset": "§e[HoloShape] Đã reset trạng thái!"
+}

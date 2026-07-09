@@ -1,27 +1,29 @@
 package net.holoshape;
 
+import net.minecraft.text.Text;
+
 public enum ShapeType {
-    CIRCLE("Vòng tròn"),
-    RECTANGLE("Hình chữ nhật"),
-    SPHERE("Hình cầu"),
-    LINE("Đường thẳng"),
-    CUBOID("Hình hộp"),
-    CYLINDER("Hình trụ"),
-    CONE("Hình nón"),
-    PYRAMID("Hình chóp"),
-    STAR("Ngôi sao"),
-    HEART("Trái tim"),
-    TORUS("Hình phao"),
-    HEXAGON("Hình lục giác"),
-    OCTAGON("Hình bát giác");
+    CIRCLE("circle"),
+    RECTANGLE("rectangle"),
+    SPHERE("sphere"),
+    LINE("line"),
+    CUBOID("cuboid"),
+    CYLINDER("cylinder"),
+    CONE("cone"),
+    PYRAMID("pyramid"),
+    STAR("star"),
+    HEART("heart"),
+    TORUS("torus"),
+    HEXAGON("hexagon"),
+    OCTAGON("octagon");
 
-    private final String displayName;
+    private final String translationKey;
 
-    ShapeType(String displayName) {
-        this.displayName = displayName;
+    ShapeType(String keyName) {
+        this.translationKey = "gui.holoshape.shape." + keyName;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public Text getDisplayName() {
+        return Text.translatable(translationKey);
     }
 }

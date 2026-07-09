@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "holoshape",
   "name": "HoloShape",
-  "description": "A client-side builder utility mod that renders shape previews.",
+  "description": "A client-side builder utility mod that renders shape previews. Cre:HuyPhan(Sun)",
   "version": "${version}",
   "environment": "client",
   "entrypoints": {
@@ -10,6 +10,13 @@
       "net.holoshape.HoloShapeClient"
     ]
   },
+  "authors": [
+    "HuyPhan(Sun)"
+  ],
+  "contact": {
+    "homepage": "https://github.com/Huyphan68080/Mod-HoloShape"
+  },
+  "icon": "assets/holoshape/icon.png",
   "depends": {
     "fabricloader": ">=0.16.0",
     "minecraft": ">=1.21",

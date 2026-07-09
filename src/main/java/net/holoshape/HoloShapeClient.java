@@ -296,12 +296,12 @@ public class HoloShapeClient implements ClientModInitializer {
             shapeOffsets.clear();
             lastRadiusCalculated = -1.0;
             lastTargetPos = null;
-            player.sendMessage(Text.literal("§c[HoloShape] Đã đặt Điểm 1 tại: " + clickedPos.toShortString()), false);
+            player.sendMessage(Text.translatable("chat.holoshape.set_point1", clickedPos.toShortString()), false);
         } else if (state == 1) {
             state = 2;
             secondPos = clickedPos;
             calculateOffsets(clickedPos);
-            player.sendMessage(Text.literal("§3[HoloShape] Đã chốt hình dạng!"), false);
+            player.sendMessage(Text.translatable("chat.holoshape.finalized"), false);
         }
     }
 
@@ -314,6 +314,6 @@ public class HoloShapeClient implements ClientModInitializer {
         lastRadiusCalculated = -1.0;
         lastHeightCalculated = -99999;
         lastTargetPos = null;
-        player.sendMessage(Text.literal("§e[HoloShape] Đã reset trạng thái!"), false);
+        player.sendMessage(Text.translatable("chat.holoshape.reset"), false);
     }
 }

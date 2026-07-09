@@ -1,10 +1,11 @@
 # HoloShape Mod - Minecraft Fabric 1.21.11
+**Cre: HuyPhan(Sun)**
 
 **HoloShape** là một Mod Minecraft dạng Client-side giúp người chơi hiển thị trước hình dáng ảo (Hologram Preview) của các khối hình học 3D trong thế giới thực tế trước khi tiến hành xây dựng hoặc thiết kế. Mod hỗ trợ rất nhiều dạng hình học từ cơ bản đến phức tạp, được tính toán động (real-time voxelization) theo hướng nhìn của người chơi.
 
 <p align="center">
-  <a href="https://github.com/Huyphan68080/Mod-HoloShape/raw/main/releases/holoshape-1.0.0.jar" target="_blank">
-    <img src="https://img.shields.io/badge/T%E1%BA%A3i%20v%E1%BB%81-holoshape--1.0.0.jar-brightgreen?style=for-the-badge&logo=minecraft&logoColor=white" alt="Download JAR" />
+  <a href="https://github.com/Huyphan68080/Mod-HoloShape/raw/main/releases/holoshape-1.0.1.jar" target="_blank">
+    <img src="https://img.shields.io/badge/T%E1%BA%A3i%20v%E1%BB%81-holoshape--1.0.1.jar-brightgreen?style=for-the-badge&logo=minecraft&logoColor=white" alt="Download JAR" />
   </a>
 </p>
 

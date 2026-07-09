@@ -2,5 +2,21 @@
   "key.holoshape.open_gui": "Open HoloShape GUI",
   "key.category.holoshape.main": "HoloShape Mod",
   "category.holoshape": "HoloShape Mod",
-  "gui.holoshape.title": "HoloShape Selection"
+  "gui.holoshape.title": "HoloShape Selection - Cre:HuyPhan(Sun)",
+  "gui.holoshape.shape.circle": "Circle",
+  "gui.holoshape.shape.rectangle": "Rectangle",
+  "gui.holoshape.shape.sphere": "Sphere",
+  "gui.holoshape.shape.line": "Line",
+  "gui.holoshape.shape.cuboid": "Cuboid",
+  "gui.holoshape.shape.cylinder": "Cylinder",
+  "gui.holoshape.shape.cone": "Cone",
+  "gui.holoshape.shape.pyramid": "Pyramid",
+  "gui.holoshape.shape.star": "Star",
+  "gui.holoshape.shape.heart": "Heart",
+  "gui.holoshape.shape.torus": "Torus",
+  "gui.holoshape.shape.hexagon": "Hexagon",
+  "gui.holoshape.shape.octagon": "Octagon",
+  "chat.holoshape.set_point1": "§c[HoloShape] Set Point 1 at: %s",
+  "chat.holoshape.finalized": "§3[HoloShape] Shape finalized!",
+  "chat.holoshape.reset": "§e[HoloShape] State reset!"
 }
